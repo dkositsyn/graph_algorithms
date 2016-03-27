@@ -1,6 +1,8 @@
 
 import unittest
 from collections import namedtuple
+
+import graph_helper
 from graph import Graph
 
 
@@ -105,8 +107,9 @@ def _get_cut_arcs(min_cut, edge_marks):
 def ford_fulkerson(graph, source, target):
     assert isinstance(graph, Graph)
     assert 0 <= source < len(graph)
+    assert 0 <= target < len(graph)
 
-    inverse_graph = Graph.inverse(graph)  # just to know backward arcs
+    inverse_graph = graph_helper.inverse(graph)  # just to know backward arcs
 
     edge_marks = graph.get_mark_collection()
     edge_marks.reset_marks(0)  # set zero flow
@@ -133,6 +136,16 @@ def ford_fulkerson(graph, source, target):
     return max_flow_value
 
 
+def ford_fulkerson_multi(graph, sources, targets):
+    assert isinstance(graph, Graph)
+
+    graph, new_source = graph_helper.add_new_source(graph, sources)
+    graph, new_target = graph_helper.add_new_target(graph, targets)
+
+    max_flow_value = ford_fulkerson(graph, new_source, new_target)
+    return max_flow_value
+
+
 class TestCase(unittest.TestCase):
     def test_simple(self):
         graph = Graph(6)
@@ -141,6 +154,7 @@ class TestCase(unittest.TestCase):
         graph.add_arc(0, 2, 15)
         graph.add_arc(1, 2, 7)
         graph.add_arc(1, 3, 2)
+        graph.add_arc(2, 1, 13)
         graph.add_arc(2, 4, 5)
         graph.add_arc(3, 2, 1)
         graph.add_arc(3, 5, 20)
@@ -148,6 +162,24 @@ class TestCase(unittest.TestCase):
         graph.add_arc(4, 5, 4)
 
         value = ford_fulkerson(graph, 0, 5)
+        expected_value = 7
+
+        self.assertEqual(value, expected_value)
+
+    def test_simple_multi(self):
+        graph = Graph(6)
+
+        graph.add_arc(0, 1, 7)
+        graph.add_arc(0, 2, 2)
+        graph.add_arc(1, 0, 13)
+        graph.add_arc(1, 3, 5)
+        graph.add_arc(2, 1, 1)
+        graph.add_arc(2, 4, 20)
+        graph.add_arc(3, 2, 3)
+        graph.add_arc(3, 5, 4)
+        graph.add_arc(4, 5, 9)
+
+        value = ford_fulkerson_multi(graph, [0, 1], [4, 5])
         expected_value = 7
 
         self.assertEqual(value, expected_value)
