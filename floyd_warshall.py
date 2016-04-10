@@ -10,7 +10,7 @@ def floyd_warshall(graph):
     # setup distances
     for v_from in xrange(len(graph)):
         for v_to in xrange(len(graph)):
-            if graph.has_arc(v_from, v_to):
+            if graph.has(v_from, v_to):
                 marks[v_from][v_to] = graph.get_mark(v_from, v_to)
         marks[v_from][v_from] = 0  # d(i, i) = 0
 
@@ -35,15 +35,15 @@ class TestCase(unittest.TestCase):
     def test_simple(self):
         graph = Graph(6)
 
-        graph.add_arc(0, 1, 3)
-        graph.add_arc(0, 2, 15)
-        graph.add_arc(1, 2, 7)
-        graph.add_arc(1, 3, 2)
-        graph.add_arc(2, 4, 5)
-        graph.add_arc(3, 2, 1)
-        graph.add_arc(3, 5, 20)
-        graph.add_arc(4, 3, 3)
-        graph.add_arc(4, 5, 4)
+        graph.add(0, 1, 3)
+        graph.add(0, 2, 15)
+        graph.add(1, 2, 7)
+        graph.add(1, 3, 2)
+        graph.add(2, 4, 5)
+        graph.add(3, 2, 1)
+        graph.add(3, 5, 20)
+        graph.add(4, 3, 3)
+        graph.add(4, 5, 4)
 
         marks = floyd_warshall(graph)
         expected_marks = [[0, 3, 6, 5, 11, 15],
