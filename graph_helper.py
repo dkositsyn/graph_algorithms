@@ -20,6 +20,18 @@ def inverse(graph):
     return new_graph
 
 
+def transpose(matrix):
+    height, width = len(matrix), len(matrix[0])
+
+    transposed = [[None] * height for _ in xrange(width)]
+
+    for row_idx in xrange(height):
+        for col_idx in xrange(width):
+            transposed[col_idx][row_idx] = matrix[row_idx][col_idx]
+
+    return transposed
+
+
 def merge_vertices(graph, *vertex_indices):
     """replace some vertices with one merging their arcs
 

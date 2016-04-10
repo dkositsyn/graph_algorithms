@@ -130,7 +130,7 @@ def ford_fulkerson(graph, source, target, initial_flow=None):
 
     max_flow_value = _estimate_max_flow(graph, source, flow_marks)
     min_cut = _get_min_cut(marks)
-    min_cut_arcs = _get_cut_arcs(min_cut, flow_marks)
+    # min_cut_arcs = _get_cut_arcs(min_cut, flow_marks)
 
     return max_flow_value, min_cut, flow_marks
 
