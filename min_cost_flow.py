@@ -1,5 +1,7 @@
 
 import unittest
+from copy import deepcopy
+
 from graph import Graph, ArcMarks
 from graph_helper import ARC_FLOW_LIMIT
 
@@ -12,6 +14,21 @@ def min_cost_flow(graph, cost_marks, source, target):
     assert 0 <= source < len(graph)
     assert 0 <= target < len(graph)
 
+    original_graph = graph
+    original_cost_marks = cost_marks
+
+    graph = graph.copy()
+    cost_marks = deepcopy(cost_marks)
+
+    # add backward arcs with zero capacity and opposite cost
+    for v_from, v_to_collection in enumerate(original_graph):
+        for v_to in v_to_collection:
+            graph.add(v_to, v_from, 0)
+
+    for (v_from, v_to), cost in original_cost_marks.iteritems():
+        cost_marks.set_mark(v_to, v_from, -cost)
+
+    # initialize flow
     flow_marks = graph.get_mark_collection()
     flow_marks.reset_marks(0)  # set zero flow
 
@@ -26,7 +43,7 @@ def min_cost_flow(graph, cost_marks, source, target):
             for v_to in v_to_collection:
                 max_arc_flow = graph.get_mark(v_from, v_to)
                 current_flow = flow_marks[(v_from, v_to)]
-                arc_exists = bool(max_arc_flow - current_flow)
+                arc_exists = (max_arc_flow != current_flow)
 
                 weight = cost_marks[(v_from, v_to)] if arc_exists else ARC_FLOW_LIMIT
                 rest_flow_graph.set_mark(v_from, v_to, weight)
@@ -57,6 +74,7 @@ def min_cost_flow(graph, cost_marks, source, target):
             while prev_vertex is not None:
                 arc_cost = cost_marks[(prev_vertex, curr_vertex)]
                 flow_marks[(prev_vertex, curr_vertex)] += extra_flow
+                flow_marks[(curr_vertex, prev_vertex)] -= extra_flow  # for paired arc
                 flow_cost += arc_cost * extra_flow
                 curr_vertex, prev_vertex = prev_vertex, prev_vertex_marks[prev_vertex]
         else:

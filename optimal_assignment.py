@@ -32,6 +32,8 @@ def optimal_assignment(cost_matrix):
     # all_assigned = bool(max_flow == min(len(left_part_vertices), len(right_part_vertices)))
 
     optimal_assignment_value = graph_helper.get_arcs_with_flow(flow_marks, (new_source_idx, new_target_idx))
+    optimal_assignment_value = [(u, v) for (u, v) in optimal_assignment_value
+                                if flow_marks.get_mark(u, v) > 0]  # only arcs with unit flow (not artificial)
 
     return flow_cost, optimal_assignment_value
 
@@ -123,28 +125,27 @@ class TestCase(unittest.TestCase):
         ]
 
         flow_cost, optimal_assignment_value = optimal_assignment(cost_matrix)
+        flow_cost_h, optimal_assignment_value_h = hungarian_algorithm(cost_matrix)
 
         # optimal assignment is not unique
         # set([(0, 5), (1, 6), (2, 7), (3, 4)]) or [(1, 5), (0, 6), ...]
 
         self.assertEqual(13, flow_cost)
+        self.assertEqual(13, flow_cost_h)
 
-    def test_hungarian_algorithm(self):
-        # max edge flow is equal to 1 everywhere
-
+    def test_optimal_assignment_2(self):
         cost_matrix = [
-            [7, 5, 6, 3],
-            [2, 1, 2, 1],
-            [5, 5, 5, 2],
-            [4, 4, 5, 2],
+            [0, 0, 3, 7],
+            [5, 0, 7, 0],
+            [0, 0, 5, 5],
+            [10, 0, 0, 5],
         ]
 
-        flow_cost, optimal_assignment_value = hungarian_algorithm(cost_matrix)
+        flow_cost, optimal_assignment_value = optimal_assignment(cost_matrix)
+        flow_cost_h, optimal_assignment_value_h = hungarian_algorithm(cost_matrix)
 
-        # optimal assignment is not unique
-        # set([(0, 5), (1, 6), (2, 7), (3, 4)]) or [(1, 5), (0, 6), ...]
-
-        self.assertEqual(13, flow_cost)
+        self.assertEqual(0, flow_cost)
+        self.assertEqual(0, flow_cost_h)
 
 
 if __name__ == '__main__':
