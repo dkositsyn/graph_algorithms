@@ -8,7 +8,7 @@ from functools import total_ordering
 from graph import Graph
 import graph_helper
 
-MAX_COST = 0xFFFFFFFF
+MAX_COST = 0xFFFFFFFF  # infinity in fact
 
 
 def tsp_dynamic(cost_matrix):
@@ -25,7 +25,10 @@ def tsp_dynamic(cost_matrix):
             return d[i][mask]
 
         for j in xrange(n):
-            if cost_matrix[i][j] != MAX_COST and mask & (1 << j):  # index 0 is 0th bit etc.
+            # if arc j->i exists and mask states that vertex "j" is on the current path
+            if cost_matrix[j][i] != MAX_COST and mask & (1 << j):  # index 0 is 0th bit etc.
+                # try update: check whether d[j][mask-2^j] + cost_matrix[j][i] is less than current minimum
+                # note: mask-2^j is mask with j'th bit unset
                 d[i][mask] = min(d[i][mask], _find_optimal_length(j, mask & ~(1 << j)) + cost_matrix[j][i])
 
         return d[i][mask]
