@@ -12,13 +12,14 @@ class ArcMarks(collections.Mapping):
         return copy.deepcopy(self)
 
     def get_mark(self, vertex_from, vertex_to):
-        return self._marks[(vertex_from, vertex_to)]
+        return self._marks.get((vertex_from, vertex_to), None)
 
     def set_mark(self, vertex_from, vertex_to, value):
         self._marks[(vertex_from, vertex_to)] = value
 
     def del_mark(self, vertex_from, vertex_to):
-        del self._marks[(vertex_from, vertex_to)]
+        if (vertex_from, vertex_to) in self._marks:
+            del self._marks[(vertex_from, vertex_to)]
 
     def reset_marks(self, default_value=None):
         for key in self._marks.iterkeys():

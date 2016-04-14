@@ -1,4 +1,5 @@
 
+import unittest
 import itertools
 import collections
 from graph import Graph
@@ -144,3 +145,53 @@ def get_arcs_with_flow(flow_marks, artificial_vertices=()):
             arcs_with_flow.append((v_from, v_to))
 
     return arcs_with_flow
+
+
+def has_cycle(graph):
+    assert isinstance(graph, Graph)
+
+    # visit colors
+    WHITE, GRAY, BLACK = range(3)
+
+    visit_color = [WHITE] * len(graph)
+
+    def _dfs(source, destinations):
+        visit_result = True
+
+        if visit_color[source] == WHITE:
+            visit_color[source] = GRAY
+            for destination in destinations:
+                visit_result = _dfs(destination, graph.get_forward(destination))
+            visit_color[source] = BLACK
+        elif visit_color[source] == GRAY:
+            visit_result = False  # cycle exists
+        else:  # visit color is black - checked earlier
+            visit_result = True
+
+        return visit_result
+
+    for v_from, v_to_collection in enumerate(graph):
+        if not _dfs(v_from, v_to_collection):
+            return True
+
+    return False
+
+
+class TestCase(unittest.TestCase):
+    def test_has_cycle(self):
+        graph = Graph(3)
+
+        graph.add(0, 1)
+        graph.add(1, 2)
+        graph.add(2, 0)
+
+        self.assertTrue(has_cycle(graph))
+
+        graph.remove(2, 0)
+        graph.add(0, 2)
+
+        self.assertFalse(has_cycle(graph))
+
+
+if __name__ == '__main__':
+    unittest.main()
