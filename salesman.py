@@ -195,6 +195,7 @@ class Vertex(object):
 
 
 def tsp_branch_and_bound(cost_matrix):
+    # work correctly for maxtrices with size > 2
     branch_vertices = []
     vertex = Vertex(deepcopy(cost_matrix))
     vertex.simplify()
@@ -210,17 +211,27 @@ def tsp_branch_and_bound(cost_matrix):
 
         position_of_max_penalized_zero = best_estimate.find_zero_with_max_penalty()
 
+        # cannot have actual size 2:
+        # - best estimate hasn't actual size 2 as we don't add right leafs with actual size 2
+        # - if best estimate has actual size 3 and there is only 0 (besides infinite values) in a row or column,
+        # it'll be chosen as optimal as its penalty will be infinite
         left_leaf = best_estimate.get_modified_arc_not_chosen(position_of_max_penalized_zero)
         left_leaf.simplify()
 
         heapq.heappush(branch_vertices, left_leaf)
 
         right_leaf = best_estimate.get_modified_arc_chosen(position_of_max_penalized_zero)
+
+        if right_leaf is None:  # has cycle of length less than size
+            continue
+
         right_leaf.simplify()
 
-        if right_leaf.actual_size == 2 and best_value > right_leaf.value:
-            best_value = right_leaf.value
-            best_vertex = right_leaf
+        if right_leaf.actual_size == 2:
+            if best_value > right_leaf.value:
+                best_value = right_leaf.value
+                best_vertex = right_leaf
+            # else it isn't optimal
         else:
             heapq.heappush(branch_vertices, right_leaf)
 
