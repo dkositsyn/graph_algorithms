@@ -36,6 +36,7 @@ def tsp_dynamic(cost_matrix):
     shortest_length = _find_optimal_length(0, 2**n - 1)
 
     def _find_optimal_path(last_vertex, mask):
+        # we start from the last vertex recursively => real path is reversed
         path = [last_vertex]
 
         while mask:
@@ -46,7 +47,7 @@ def tsp_dynamic(cost_matrix):
                     path.append(j)
                     break
 
-        return path
+        return reversed(path)  # path has to be reversed
 
     shortest_path = _find_optimal_path(0, 2**n - 1)
 
