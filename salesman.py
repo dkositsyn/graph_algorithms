@@ -189,9 +189,6 @@ class Vertex(object):
 
         new_vertex.positions.append(position)
 
-        if new_vertex.has_cycle():
-            return None
-
         return new_vertex
 
 
@@ -223,7 +220,7 @@ def tsp_branch_and_bound(cost_matrix):
 
         right_leaf = best_estimate.get_modified_arc_chosen(position_of_max_penalized_zero)
 
-        if right_leaf is None:  # has cycle of length less than size
+        if right_leaf.has_cycle():  # has cycle of length less than size
             continue
 
         right_leaf.simplify()
