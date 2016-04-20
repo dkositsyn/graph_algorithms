@@ -118,3 +118,14 @@ class UndirectedGraph(Graph):
 
     def __getitem__(self, vertex_idx):
         return self.get_adjacent(vertex_idx)
+
+    def get_mark(self, vertex_from, vertex_to):
+        if vertex_to not in self.get_forward(vertex_from):
+            vertex_from, vertex_to = vertex_to, vertex_from
+        mark = super(UndirectedGraph, self).get_mark(vertex_from, vertex_to)
+        return mark
+
+    def set_mark(self, vertex_from, vertex_to, value):
+        if vertex_to not in self.get_forward(vertex_from):
+            vertex_from, vertex_to = vertex_to, vertex_from
+        super(UndirectedGraph, self).set_mark(vertex_from, vertex_to, value)
