@@ -16,13 +16,16 @@ def prim(graph):
     discovered[v_from] = True
 
     # first condition is added to enumerate edges from start vertex as from any other one
-    while v_from == 0 or not (all(discovered) or not edges_to_discover):
+    while v_from == 0 or not all(discovered):
         # add incident edges that help to discover some vertices
         for v_to in graph[v_from]:
             if not discovered[v_to]:
                 edge_weight = graph.get_mark(v_from, v_to)
                 # edges will be sorted by weight (then by v_from and v_to) automatically
                 heapq.heappush(edges_to_discover, (edge_weight, v_from, v_to))
+
+        if not edges_to_discover:
+            break
 
         # find edge with min. weight from discovered vertex to an undiscovered one
         min_weight, min_v_from, min_v_to = heapq.heappop(edges_to_discover)
