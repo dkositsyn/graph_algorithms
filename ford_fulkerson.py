@@ -43,7 +43,7 @@ def _dfs(graph, source, target, marks, edge_marks, discovered):
             if edge_flow == 0:
                 continue
 
-            if marks[v_from].estimate is None:
+            if marks[v_to].estimate is None:
                 estimate_from = edge_flow
             else:
                 estimate_from = min(marks[v_to].estimate, edge_flow)

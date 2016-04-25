@@ -39,7 +39,7 @@ def max_time(graph, project_critical_time):
     return marks
 
 
-def get_reserve_time(graph, min_time_values, max_time_values, eliminate_artificial_arcs=True):
+def get_reserve_time(graph, min_time_values, max_time_values):
     # graph numbering is supposed to be correct
     assert isinstance(graph, Graph)
 
@@ -49,9 +49,6 @@ def get_reserve_time(graph, min_time_values, max_time_values, eliminate_artifici
     for v_from, v_to_collection in enumerate(graph):
         for v_to in v_to_collection:
             arc_mark = graph.get_mark(v_from, v_to)
-
-            if eliminate_artificial_arcs and not arc_mark:
-                continue
 
             free_reserve_mark = min_time_values[v_to] - min_time_values[v_from] - arc_mark
             free_reserve_marks.set_mark(v_from, v_to, free_reserve_mark)
