@@ -201,7 +201,7 @@ def tsp_branch_and_bound(cost_matrix):
 
     best_value, best_vertex = MAX_COST, None
 
-    while True:
+    while branch_vertices:
         best_estimate = heapq.heappop(branch_vertices)
 
         if best_estimate.value >= best_value:
