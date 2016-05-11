@@ -78,24 +78,23 @@ class Vertex(object):
 
     def build_path(self):
         arcs = deepcopy(self.positions)
-        vertex_visit_count = [0] * self.size
+        vertex_in, vertex_out = [False] * self.size, [False] * self.size
 
         for arc in arcs:
             v_from, v_to = arc
-            vertex_visit_count[v_from] += 1
-            vertex_visit_count[v_to] += 1
+            vertex_out[v_from] = True
+            vertex_in[v_to] = True
 
-        (not_visited, ) = [idx for idx, x in enumerate(vertex_visit_count) if x == 0]
-        one_time_visited = [idx for idx, x in enumerate(vertex_visit_count) if x == 1]
+        require_in_arc = [idx for idx, x in enumerate(vertex_in) if not x]
+        require_out_arc = [idx for idx, x in enumerate(vertex_out) if not x]
 
-        if not self.matrix[not_visited][one_time_visited[0]] and not self.matrix[one_time_visited[1]][not_visited]:
-            # path one_time_visited[1] -> not_visited -> one_time_visited[0]
-            arcs.append((not_visited, one_time_visited[0]))
-            arcs.append((one_time_visited[1], not_visited))
+        # check whether specific arcs have zero weight => they present in optimal path if so
+        if self.matrix[require_out_arc[0]][require_in_arc[0]] == 0 and self.matrix[require_out_arc[1]][require_in_arc[1]] == 0:
+            arcs.append((require_out_arc[0], require_in_arc[0]))
+            arcs.append((require_out_arc[1], require_in_arc[1]))
         else:
-            # path one_time_visited[0] -> not_visited -> one_time_visited[1]
-            arcs.append((not_visited, one_time_visited[1]))
-            arcs.append((one_time_visited[0], not_visited))
+            arcs.append((require_out_arc[0], require_in_arc[1]))
+            arcs.append((require_out_arc[1], require_in_arc[0]))
 
         arcs = sorted(arcs)
         path = [0]
