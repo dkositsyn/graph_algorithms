@@ -47,7 +47,7 @@ def tsp_dynamic(cost_matrix):
                     path.append(j)
                     break
 
-        return reversed(path)  # path has to be reversed
+        return list(reversed(path))  # path has to be reversed
 
     shortest_path = _find_optimal_path(0, 2**n - 1)
 
