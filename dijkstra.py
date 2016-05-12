@@ -22,7 +22,7 @@ def dijkstra(graph, source):
             _relax(marks, prev_vertex_marks, v_from, v_to, graph.get_mark(v_from, v_to))
         v_from = _find_min_undiscovered(marks, discovered)
 
-    assert all(discovered), "Graph has stand-alone vertices"
+    # assert all(discovered), "Graph has stand-alone vertices"
     return marks, prev_vertex_marks
 
 

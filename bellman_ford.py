@@ -23,7 +23,7 @@ def bellman_ford(graph, source):
             for v_to in graph[v_from]:
                 _relax(marks, prev_vertex_marks, v_from, v_to, graph.get_mark(v_from, v_to), last_relaxed_vertices)
 
-    assert all(map(lambda x: isinstance(x, (int, long)), marks)), "Graph has stand-alone vertices"
+    # assert all(map(lambda x: isinstance(x, (int, long)), marks)), "Graph has stand-alone vertices"
 
     # relaxed vertices are vertices on the negative cycle if not empty
     return marks, prev_vertex_marks, last_relaxed_vertices

@@ -42,15 +42,15 @@ class TestCase(unittest.TestCase):
         graph.add(2, 4, 5)
         graph.add(3, 2, 1)
         graph.add(3, 5, 20)
-        graph.add(4, 3, 3)
+        graph.add(4, 3, -3)
         graph.add(4, 5, 4)
 
         marks = floyd_warshall(graph)
         expected_marks = [[0, 3, 6, 5, 11, 15],
                           [None, 0, 3, 2, 8, 12],
-                          [None, None, 0, 8, 5, 9],
+                          [None, None, 0, 2, 5, 9],
                           [None, None, 1, 0, 6, 10],
-                          [None, None, 4, 3, 0, 4],
+                          [None, None, -2, -3, 0, 4],
                           [None, None, None, None, None, 0],
                           ]
 
