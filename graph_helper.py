@@ -2,7 +2,7 @@
 import unittest
 import itertools
 import collections
-from graph import Graph
+from graph import Graph, UndirectedGraph
 
 ARC_FLOW_LIMIT = 0xFFFFFFFF
 ARC_COST_LIMIT = 0xFFFFFFFF
@@ -41,18 +41,33 @@ def merge_vertices(graph, *vertex_indices):
     """
     assert isinstance(graph, Graph)
     assert isinstance(vertex_indices, collections.Sequence) and len(vertex_indices) > 1
-    target_vertex = vertex_indices[0]
 
-    new_graph = Graph(len(graph))
+    target_vertex, vertex_to_remove = min(vertex_indices), max(vertex_indices)
 
-    for v_from, v_to_collection in enumerate(graph):
-        for v_to in v_to_collection:
+    new_graph = type(graph)(len(graph) - 1)
+
+    for v_from in xrange(len(graph)):
+        for v_to in graph.get_forward(v_from):
             weight = graph.get_mark(v_from, v_to)
+
+            # check merged vertices
             if v_from in vertex_indices:
                 v_from = target_vertex
             if v_to in vertex_indices:
                 v_to = target_vertex
-            new_graph.add(v_from, v_to, weight)
+
+            # shift vertex indices
+            if v_from > vertex_to_remove:
+                v_from -= 1
+            if v_to > vertex_to_remove:
+                v_to -= 1
+
+            if new_graph.has(v_from, v_to):
+                # update arc weight - sum of weights
+                new_weight = weight + new_graph.get_mark(v_from, v_to)
+                new_graph.set_mark(v_from, v_to, new_weight)
+            else:
+                new_graph.add(v_from, v_to, weight)
 
     return new_graph
 
@@ -66,13 +81,12 @@ def split_vertex(graph, vertex_idx, new_weight=None, add_reversed=False):
     :param add_reversed: Add an edge (instead of just arc) between split vertices
     """
     assert isinstance(graph, Graph)
-
-    new_graph = Graph(len(graph))
-
     target_vertex = len(graph)
 
-    for v_from, v_to_collection in enumerate(graph):
-        for v_to in v_to_collection:
+    new_graph = type(graph)(len(graph) + 1)
+
+    for v_from in xrange(len(graph)):
+        for v_to in graph.get_forward(v_from):
             weight = graph.get_mark(v_from, v_to)
             if v_from == vertex_idx:
                 v_from = target_vertex
